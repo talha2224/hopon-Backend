@@ -1,15 +1,36 @@
 const { storage } = require("../config/firebase.config");
 const { getDownloadURL, ref, uploadBytes } = require("@firebase/storage");
 
+
+const toRad = (degree) => {
+    return degree * (Math.PI / 180);
+};
+
 module.exports = {
-    
-    uploadFile:(async(file)=>{
+
+    uploadFile: (async (file) => {
         const uniqueFilename = `${file.originalname}-${Date.now()}`;
         const storageRef = ref(storage, `${uniqueFilename}`);
         await uploadBytes(storageRef, file.buffer);
-        const result= await getDownloadURL(storageRef);
-        let downloadUrl=result;
+        const result = await getDownloadURL(storageRef);
+        let downloadUrl = result;
         return downloadUrl
     }),
+    calculateDistance:(pickup, dropoff) => {
+        const lat1 = pickup.coordinates[1];
+        const lon1 = pickup.coordinates[0];
+        const lat2 = dropoff.coordinates[1];
+        const lon2 = dropoff.coordinates[0];
     
+        const R = 6371;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+    
+        const a =Math.sin(dLat / 2) * Math.sin(dLat / 2) +Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
+        return distance;
+    }
+
+
 }
