@@ -10,6 +10,8 @@ const bookingSchema = new Schema({
   distance: { type: Number, required: true },
   status: { type: String, default: 'Pending' },
   bookingTime: { type: Date, default: Date.now() },
+  accepted:{type:Boolean,default:false},
+  dropoffAddress:{type: String, default: 'Point'}
 });
 
 bookingSchema.index({ pickupLocation: '2dsphere' });
