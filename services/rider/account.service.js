@@ -43,7 +43,6 @@ const getAccountByPhone = async (req,res)=>{
         let accountsss = await riderAccount.find({})
         console.log(accountsss)
         let findAccount = await riderAccount.findOne({phone_number:req.params.phone})
-        console.log(findAccount,'findAccount')
         if(findAccount){
             return res.status(201).json({msg:null,data:findAccount})
         }

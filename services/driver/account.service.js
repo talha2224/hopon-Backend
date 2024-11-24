@@ -61,7 +61,6 @@ const getAccount = async (req, res) => {
 const getAccountByPhone = async (req, res) => {
     try {
         let findAccount = await driverAccount.findOne({ phone_number: req.params.phone })
-        console.log(findAccount, 'findAccount')
         if (findAccount) {
             return res.status(201).json({ msg: null, data: findAccount })
         }
