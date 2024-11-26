@@ -11,7 +11,9 @@ const bookingSchema = new Schema({
   status: { type: String, default: 'Pending' },
   bookingTime: { type: Date, default: Date.now() },
   accepted:{type:Boolean,default:false},
-  dropoffAddress:{type: String, default: 'Point'}
+  cancelled:{type:Boolean,default:false},
+  dropoffAddress:{type: String, default: ''},
+  pickUpAddress:{type: String, default: ''}
 });
 
 bookingSchema.index({ pickupLocation: '2dsphere' });
