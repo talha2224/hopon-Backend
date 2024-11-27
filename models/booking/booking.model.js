@@ -14,7 +14,7 @@ const bookingSchema = new Schema({
   cancelled:{type:Boolean,default:false},
   dropoffAddress:{type: String, default: ''},
   pickUpAddress:{type: String, default: ''}
-});
+},{timestamps:true});
 
 bookingSchema.index({ pickupLocation: '2dsphere' });
 bookingSchema.index({ dropoffLocation: '2dsphere' });
