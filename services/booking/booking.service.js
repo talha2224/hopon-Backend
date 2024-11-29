@@ -1,5 +1,8 @@
 const bookingModel = require("../../models/booking/booking.model");
+const driverAccount = require("../../models/driver/account.model");
 const Notification = require("../../models/rider/notification.model");
+const Wallet = require("../../models/wallet/wallet.model")
+
 const { calculateDistance } = require("../../utils/function")
 
 
@@ -64,8 +67,13 @@ const acceptBooking = async (req, res) => {
 const endRide = async (req, res) => {
     try {
         const newBooking = await bookingModel.findByIdAndUpdate(req.params.id, { status: 'Completed', accepted: true }, { $new: true });
+        let fareAmount =newBooking?.fare*0.05
+        await Wallet.create({riderId:newBooking.rider,amount:newBooking?.fare,deposit:false,message:"Ride Payment Sent"})
+        await Wallet.create({driverId:newBooking.driver,amount:newBooking?.fare,deposit:true,message:"Ride Payment Recieved"})
+        await driverAccount.findByIdAndUpdate(newBooking.driver,{pendingAmount:fareAmount})        
         await Notification.create({riderId:newBooking.rider,title:"Ride Completed",description:"You ride is completed"})
-        await Notification.create({driverId:newBooking.driver,title:"Ride Completed",description:"You ride is completed"})        
+        await Notification.create({driverId:newBooking.driver,title:"Ride Completed",description:"You ride is completed"})  
+      
         // global.io.emit('cancelRide', newBooking);
         return res.status(200).json({ data: newBooking });
     }

@@ -1,5 +1,5 @@
 const { multipleupload } = require("../../config/multer.config")
-const { createAccount, getAccount, getAccountByPhone, updateLocation, nearbyDrivers, getDriverLocation } = require("../../services/driver/account.service")
+const { createAccount, getAccount, getAccountByPhone, updateLocation, nearbyDrivers, getDriverLocation, updateBalance } = require("../../services/driver/account.service")
 
 const router = require("express").Router()
 
@@ -10,6 +10,7 @@ router.get("/phone/:phone",getAccountByPhone)
 router.post("/update/location",updateLocation)
 router.post("/near-by",nearbyDrivers)
 router.get("/get-location/:driverId",getDriverLocation)
+router.put("/update/balance/:id",updateBalance)
 
 
 

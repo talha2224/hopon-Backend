@@ -1,6 +1,7 @@
 const driverAccount = require("../../models/driver/account.model")
-const bcrypt = require("bcryptjs")
 const { uploadFile } = require("../../utils/function")
+const Notification = require("../../models/rider/notification.model")
+const Wallet = require("../../models/wallet/wallet.model")
 
 // let licenseImage = req.files.licenseImage && req.files.licenseImage;
 // let insuranceImage = req.files.insuranceImage && req.files.insuranceImage;
@@ -8,7 +9,6 @@ const { uploadFile } = require("../../utils/function")
 
 const createAccount = async (req, res) => {
     try {
-        console.log('hhhhhhhhhhh')
         let { first_name, last_name, phone_number } = req.body
         let findAccount = await driverAccount.findOne({ phone_number: phone_number })
 
@@ -46,7 +46,7 @@ const getAccount = async (req, res) => {
     try {
         let findAccount = await driverAccount.findById(req.params.id)
         if (findAccount) {
-            return res.status(201).json({ msg: null, data: findAccount })
+            return res.status(200).json({ msg: null, data: findAccount })
         }
         else {
             return res.status(404).json({ msg: "Account Not Found" })
@@ -76,10 +76,10 @@ const getAccountByPhone = async (req, res) => {
 
 
 const updateLocation = async (req, res) => {
-    const { driverId, longitude, latitude } = req.body;
+    const { driverId, longitude, latitude,online } = req.body;
 
     try {
-        const updatedDriver = await driverAccount.findByIdAndUpdate(driverId, { $set: { location: { type: "Point", coordinates: [longitude, latitude] } }, }, { new: true });
+        const updatedDriver = await driverAccount.findByIdAndUpdate(driverId, { $set: {online:online,location: { type: "Point", coordinates: [longitude, latitude] } }, }, { new: true });
         if (!updatedDriver) {
             return res.status(404).json({ message: "Driver not found" });
         }
@@ -94,15 +94,11 @@ const updateLocation = async (req, res) => {
 
 
 const nearbyDrivers = async (req, res) => {
-    const { pickupLongitude, pickupLatitude, maxDistance = 5000 } = req.body;
-
-    console.log(pickupLatitude,pickupLongitude)
-
-
     try {
-        const nearbyDrivers = await driverAccount.find({}).limit(10);
+        const nearbyDrivers = await driverAccount.find({online:"on"}).limit(10);
         res.status(200).json(nearbyDrivers);
-    } catch (error) {
+    } 
+    catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error fetching nearby drivers", error });
     }
@@ -127,6 +123,25 @@ const getDriverLocation = async (req, res) => {
 }
 
 
+const updateBalance = async (req,res)=>{
+    try {
+        let find = await driverAccount.findById(req.params.id)
+        let account = await driverAccount.findByIdAndUpdate(req.params.id,{pendingAmount:0},{new:true})
+        if (account) {
+            await Wallet.create({driverId:req.params.id,amount:find?.pendingAmount,deposit:false,message:"Payment Sent To Admin"})
+            await Notification.create({driverId:req.params.id,title:"Payment Succesfull",description:`${find?.pendingAmount} $ Sent To Admin`})
+            return res.status(200).json({ msg: null, data: account })
+        }
+        else {
+            return res.status(404).json({ msg: "Account Not Found" })
+        }
+    } 
+    catch (error) {
+        console.log(error)
+    }
+}
 
 
-module.exports = { createAccount, getAccount, getAccountByPhone, updateLocation, nearbyDrivers,getDriverLocation }
+
+
+module.exports = { createAccount, getAccount, getAccountByPhone, updateLocation, nearbyDrivers,getDriverLocation,updateBalance }
