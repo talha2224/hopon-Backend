@@ -6,6 +6,8 @@ const notificationRoutes = require("./notification.router")
 const bookingRoutes = require("./booking.router")
 const paymentRoutes = require("./driver/payment.router")
 const WalletRoutes = require("./wallet.router")
+const chat = require("./chat/chat.router")
+const message = require("./chat/message.router")
 
 combineRouter.use("/rider",riderAccountRoutes)
 combineRouter.use("/driver",driverAccountRoutes)
@@ -13,7 +15,8 @@ combineRouter.use("/notifications",notificationRoutes)
 combineRouter.use("/ride",bookingRoutes)
 combineRouter.use("/payment",paymentRoutes)
 combineRouter.use("/wallet",WalletRoutes)
-
+combineRouter.use("/chat",chat)
+combineRouter.use("/message",message)
 
 
 

@@ -5,6 +5,7 @@ const combineRouter = require("./routers");
 const http = require("http");
 const { Server } = require("socket.io");
 require("dotenv").config();
+const Message = require("./models/chat/message.schema")
 
 const app = express();
 const server = http.createServer(app);
@@ -35,9 +36,16 @@ io.on("connection", (socket) => {
     console.log(`Driver with ID ${driverId} joined room.`);
     socket.join(driverId);
   });
+  socket.on("join-chat", (chatId) => { socket.join(chatId); console.log(`User joined chat: ${chatId}`); });
+  socket.on("send-message", async (data) => {
+    const { chatId, driverId, riderId, senderRole, message } = data;
+    const newMessage = await Message.create({ chatId, driverId, riderId, senderRole, message, });
+    io.to(chatId).emit("receive-message", newMessage);
+  });
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
+
 });
 
 app.use("*", (req, res) => {
