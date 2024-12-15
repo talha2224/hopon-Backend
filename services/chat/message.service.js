@@ -1,4 +1,4 @@
-const Message = require("../../model/chat/message.schema");
+const Message = require("../../models/chat/message.schema");
 
 
 

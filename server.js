@@ -36,7 +36,17 @@ io.on("connection", (socket) => {
     console.log(`Driver with ID ${driverId} joined room.`);
     socket.join(driverId);
   });
-  socket.on("join-chat", (chatId) => { socket.join(chatId); console.log(`User joined chat: ${chatId}`); });
+  socket.on("join-chat", async (chatId) => {
+    try {
+      socket.join(chatId);
+      console.log(`User joined chat: ${chatId}`);
+      const chatHistory = await Message.find({ chatId }).sort({ createdAt: 1 });
+      socket.emit("chat-history", chatHistory);
+    } 
+    catch (error) {
+      console.error("Error fetching chat history:", error);
+    }
+  });
   socket.on("send-message", async (data) => {
     const { chatId, driverId, riderId, senderRole, message } = data;
     const newMessage = await Message.create({ chatId, driverId, riderId, senderRole, message, });

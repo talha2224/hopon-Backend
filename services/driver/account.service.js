@@ -46,6 +46,7 @@ const getAccount = async (req, res) => {
     try {
         let findAccount = await driverAccount.findById(req.params.id)
         if (findAccount) {
+            console.log(findAccount,'findAccount')
             return res.status(200).json({ msg: null, data: findAccount })
         }
         else {
@@ -76,10 +77,10 @@ const getAccountByPhone = async (req, res) => {
 
 
 const updateLocation = async (req, res) => {
-    const { driverId, longitude, latitude,online } = req.body;
+    const { driverId, longitude, latitude, online } = req.body;
 
     try {
-        const updatedDriver = await driverAccount.findByIdAndUpdate(driverId, { $set: {online:online,location: { type: "Point", coordinates: [longitude, latitude] } }, }, { new: true });
+        const updatedDriver = await driverAccount.findByIdAndUpdate(driverId, { $set: { online: online, location: { type: "Point", coordinates: [longitude, latitude] } }, }, { new: true });
         if (!updatedDriver) {
             return res.status(404).json({ message: "Driver not found" });
         }
@@ -95,9 +96,9 @@ const updateLocation = async (req, res) => {
 
 const nearbyDrivers = async (req, res) => {
     try {
-        const nearbyDrivers = await driverAccount.find({online:"on"}).limit(10);
+        const nearbyDrivers = await driverAccount.find({ online: "on" }).limit(10);
         res.status(200).json(nearbyDrivers);
-    } 
+    }
     catch (error) {
         console.error(error);
         res.status(500).json({ message: "Error fetching nearby drivers", error });
@@ -123,19 +124,34 @@ const getDriverLocation = async (req, res) => {
 }
 
 
-const updateBalance = async (req,res)=>{
+const updateBalance = async (req, res) => {
     try {
         let find = await driverAccount.findById(req.params.id)
-        let account = await driverAccount.findByIdAndUpdate(req.params.id,{pendingAmount:0},{new:true})
+        let account = await driverAccount.findByIdAndUpdate(req.params.id, { pendingAmount: 0 }, { new: true })
         if (account) {
-            await Wallet.create({driverId:req.params.id,amount:find?.pendingAmount,deposit:false,message:"Payment Sent To Admin"})
-            await Notification.create({driverId:req.params.id,title:"Payment Succesfull",description:`${find?.pendingAmount} $ Sent To Admin`})
+            await Wallet.create({ driverId: req.params.id, amount: find?.pendingAmount, deposit: false, message: "Payment Sent To Admin" })
+            await Notification.create({ driverId: req.params.id, title: "Payment Succesfull", description: `${find?.pendingAmount} $ Sent To Admin` })
             return res.status(200).json({ msg: null, data: account })
         }
         else {
             return res.status(404).json({ msg: "Account Not Found" })
         }
-    } 
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+const uploadPicture = async (req, res) => {
+    try {
+        let { id } = req.params;
+        let image = req.file
+        console.log(image, 'image')
+        let url = await uploadFile(image);
+        console.log(url, 'url')
+        let updateProfile = await driverAccount.findByIdAndUpdate(id, { profile: url }, { new: true })
+        return res.status(200).json({ data: updateProfile, msg: "Profile Picture Updated" })
+    }
     catch (error) {
         console.log(error)
     }
@@ -144,4 +160,5 @@ const updateBalance = async (req,res)=>{
 
 
 
-module.exports = { createAccount, getAccount, getAccountByPhone, updateLocation, nearbyDrivers,getDriverLocation,updateBalance }
+
+module.exports = {uploadPicture, createAccount, getAccount, getAccountByPhone, updateLocation, nearbyDrivers, getDriverLocation, updateBalance }

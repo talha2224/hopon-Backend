@@ -8,6 +8,8 @@ const paymentRoutes = require("./driver/payment.router")
 const WalletRoutes = require("./wallet.router")
 const chat = require("./chat/chat.router")
 const message = require("./chat/message.router")
+const places = require("./rider/places.router")
+
 
 combineRouter.use("/rider",riderAccountRoutes)
 combineRouter.use("/driver",driverAccountRoutes)
@@ -17,6 +19,8 @@ combineRouter.use("/payment",paymentRoutes)
 combineRouter.use("/wallet",WalletRoutes)
 combineRouter.use("/chat",chat)
 combineRouter.use("/message",message)
+combineRouter.use("/place",places)
+
 
 
 

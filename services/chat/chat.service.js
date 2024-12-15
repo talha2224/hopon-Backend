@@ -1,5 +1,5 @@
-const Chat = require("../../model/chat/chat.schema");
-const Message = require("../../model/chat/message.schema");
+const Chat = require("../../models/chat/chat.schema");
+const Message = require("../../models/chat/message.schema");
 
 
 
@@ -10,8 +10,8 @@ const getRiderAllChats = async (req, res) => {
             return res.status(200).json({ msg: null, status: 200, data: [] });
         }
         const updatedChats = await Promise.all(chats.map(async (chat) => {
-            let latestMessage = await Message.findOne({ chatId: chat._id }).sort({ createdAt: -1 });    
-            return {...chat._doc,latestMessage: latestMessage || null,};
+            let latestMessage = await Message.findOne({ chatId: chat._id }).sort({ createdAt: -1 });
+            return { ...chat._doc, latestMessage: latestMessage || null, };
         }));
         return res.status(200).json({ msg: null, status: 200, data: updatedChats });
     } catch (error) {
@@ -27,7 +27,7 @@ const getDriverAllChats = async (req, res) => {
         }
         const updatedChats = await Promise.all(chats.map(async (chat) => {
             let latestMessage = await Message.findOne({ chatId: chat._id }).sort({ createdAt: -1 });
-            return {...chat._doc,latestMessage: latestMessage || null,};
+            return { ...chat._doc, latestMessage: latestMessage || null, };
         }));
         return res.status(200).json({ msg: null, status: 200, data: updatedChats });
     } catch (error) {
@@ -39,13 +39,13 @@ const getDriverAllChats = async (req, res) => {
 
 const createChat = async (req, res) => {
     try {
-        let { physicianId, ctemsId } = req.body
-        let data = await Chat.findOne({ physicianId: physicianId, ctemsId: ctemsId })
+        let { driverId, riderId } = req.body
+        let data = await Chat.findOne({ driverId: driverId, riderId: riderId })
         if (data?._id) {
             return res.status(200).json({ msg: null, status: 200, data: data })
         }
         else {
-            let data = await Chat.create({ physicianId: physicianId, ctemsId: ctemsId })
+            let data = await Chat.create({ driverId: driverId, riderId: riderId })
             return res.status(200).json({ msg: "Chat Created", status: 200, data: data })
         }
     }
@@ -66,4 +66,4 @@ const getSingleChat = async (req, res) => {
 
 
 
-module.exports = {getRiderAllChats,getDriverAllChats,getSingleChat,createChat}
+module.exports = { getRiderAllChats, getDriverAllChats, getSingleChat, createChat }

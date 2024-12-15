@@ -1,5 +1,6 @@
 const riderAccount = require("../../models/rider/account.model")
 const bcrypt = require("bcryptjs")
+const { uploadFile } = require("../../utils/function")
 
 
 const createAccount = async(req,res)=>{
@@ -56,6 +57,20 @@ const getAccountByPhone = async (req,res)=>{
     }
 }
 
+const uploadPicture = async (req,res)=>{
+    try {
+        let { id } = req.params;
+        let image = req.file
+        console.log(image,'image')
+        let url = await uploadFile(image);
+        console.log(url,'url')
+        let updateProfile = await riderAccount.findByIdAndUpdate(id,{profile:url},{new:true})
+        return res.status(200).json({data:updateProfile,msg:"Profile Picture Updated"})
+    } 
+    catch (error) {
+        console.log(error)
+    }
+}
 
 
-module.exports = {createAccount,getAccount,getAccountByPhone}
+module.exports = {createAccount,getAccount,getAccountByPhone,uploadPicture}

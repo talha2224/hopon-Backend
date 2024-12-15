@@ -10,7 +10,8 @@ const accountSchema = mongoose.Schema({
   inspection: { type: Array, default: null },
   carPhotos: { type: Array, required: true },
   location: {type: { type: String, default: "Point" },coordinates: [Number],},
-  online:{type:String,default:"off"}
+  online:{type:String,default:"off"},
+  profile:{type:String,default:null}
 }, { timestamps: true });
 
 // Create the DriverAccount model
