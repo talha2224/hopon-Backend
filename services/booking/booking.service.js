@@ -66,7 +66,7 @@ const acceptBooking = async (req, res) => {
 
 const endRide = async (req, res) => {
     try {
-        const newBooking = await bookingModel.findByIdAndUpdate(req.params.id, { status: 'Completed', accepted: true }, { $new: true });
+        const newBooking = await bookingModel.findByIdAndUpdate(req.params.id, {accepted: true }, { $new: true });
         let fareAmount =newBooking?.fare*0.05
         await Wallet.create({riderId:newBooking.rider,amount:newBooking?.fare,deposit:false,message:"Ride Payment Sent"})
         await Wallet.create({driverId:newBooking.driver,amount:newBooking?.fare,deposit:true,message:"Ride Payment Recieved"})

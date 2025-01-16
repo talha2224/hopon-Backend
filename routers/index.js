@@ -20,6 +20,7 @@ combineRouter.use("/wallet",WalletRoutes)
 combineRouter.use("/chat",chat)
 combineRouter.use("/message",message)
 combineRouter.use("/place",places)
+combineRouter.use("/otp",require("./driver/otp.router"))
 
 
 

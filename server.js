@@ -17,8 +17,6 @@ const io = new Server(server, {
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
-
-// Set `io` globally so it can be accessed anywhere
 global.io = io;
 
 const port = process.env.PORT || 3002;
