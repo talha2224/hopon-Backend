@@ -1,5 +1,5 @@
 const Stripe = require("stripe");
-const stripe = new Stripe("sk_test_51OjJpTASyMRcymO6FVBewDoB2x4Wi5tq5uX5PYSfkAC2pU0sZvWJbZIqGoMTnzEYYFjFh4jbcWYD3OyFc761otRt00tX4j1UO2");
+const stripe = new Stripe("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");
 
 const createPaymentIntent = async (req,res)=>{
     try {

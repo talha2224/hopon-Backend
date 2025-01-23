@@ -1,9 +1,9 @@
 const { storage } = require("../config/firebase.config");
 const { getDownloadURL, ref, uploadBytes } = require("@firebase/storage");
 const twilio = require('twilio');
-const accountSid ="AC2a03671222999313fe605f540b7ec430";
-const authToken ="b3fe3cbc3bd137ae6336f51787af8be3";
-const twilioPhoneNumber ="+12293064179";
+const accountSid ="AC2682d60469fd98cc99440fa6aece21a1";
+const authToken ="897ef0d8edfe7d199a72ae8b4d3bdbe7";
+const twilioPhoneNumber ="+18559306117";
 
 // Initialize Twilio client
 const client = twilio(accountSid, authToken);
