@@ -46,7 +46,6 @@ const getAccount = async (req, res) => {
     try {
         let findAccount = await driverAccount.findById(req.params.id)
         if (findAccount) {
-            console.log(findAccount,'findAccount')
             return res.status(200).json({ msg: null, data: findAccount })
         }
         else {

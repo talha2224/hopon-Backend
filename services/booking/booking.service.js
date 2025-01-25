@@ -66,7 +66,7 @@ const acceptBooking = async (req, res) => {
 
 const endRide = async (req, res) => {
     try {
-        const newBooking = await bookingModel.findByIdAndUpdate(req.params.id, {accepted: true }, { $new: true });
+        const newBooking = await bookingModel.findByIdAndUpdate(req.params.id, {accepted: true,status:"Completed" }, { $new: true });
         let fareAmount =newBooking?.fare*0.05
         await Wallet.create({riderId:newBooking.rider,amount:newBooking?.fare,deposit:false,message:"Ride Payment Sent"})
         await Wallet.create({driverId:newBooking.driver,amount:newBooking?.fare,deposit:true,message:"Ride Payment Recieved"})
@@ -74,7 +74,6 @@ const endRide = async (req, res) => {
         await Notification.create({riderId:newBooking.rider,title:"Ride Completed",description:"You ride is completed"})
         await Notification.create({driverId:newBooking.driver,title:"Ride Completed",description:"You ride is completed"})  
       
-        // global.io.emit('cancelRide', newBooking);
         return res.status(200).json({ data: newBooking });
     }
 
@@ -87,7 +86,6 @@ const endRide = async (req, res) => {
 const cancellBooking = async (req, res) => {
     try {
         let type = req.params.type
-        console.log(type,'rider typpppppp')
         if (type == "rider") {
             let activeBooking = await bookingModel.findOne({ rider: req.params.id, status: 'Pending' })
             if(activeBooking){
