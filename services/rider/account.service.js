@@ -1,5 +1,5 @@
 const riderAccount = require("../../models/rider/account.model")
-const bcrypt = require("bcryptjs")
+const driverAccount = require("../../models/driver/account.model")
 const { uploadFile } = require("../../utils/function")
 
 
@@ -26,7 +26,10 @@ const createAccount = async(req,res)=>{
 const getAccount = async (req,res)=>{
     try {
         let findAccount = await riderAccount.findById(req.params.id)
-        if(findAccount){
+        if(findAccount?.accountBlocked){
+            return res.status(404).json({msg:"Account Not Found"})
+        }
+        else if(findAccount){
             return res.status(201).json({msg:null,data:findAccount})
         }
         else{
@@ -73,4 +76,38 @@ const uploadPicture = async (req,res)=>{
 }
 
 
-module.exports = {createAccount,getAccount,getAccountByPhone,uploadPicture}
+const fetchAllUsers = async (req,res) =>{
+    try {
+        console.log('ENNTER')
+        let riders = await riderAccount.find().sort({createdAt:-1})
+        let drivers = await driverAccount.find().sort({createdAt:-1})
+        return res.status(200).json({data:[...riders,...drivers]})
+
+    } 
+    catch (error) {
+        
+    }
+}
+
+const toogleAccountActivation = async (req, res) => {
+    try {
+        let { accountId, toogle, role } = req.body
+        console.log(accountId, toogle, role,' accountId, toogle, role')
+        if(role=="rider"){
+            let toogleAccount = await riderAccount.findByIdAndUpdate(accountId, { accountBlocked: Boolean(toogle) }, { new: true })
+            console.log(toogleAccount,'toogleAccount rider')
+            return res.status(200).json({ data: toogleAccount, msg: `Account ${Boolean(toogle) ? "Deactivated" : "Activated"} ` })
+        }
+        else{
+            let toogleAccount = await driverAccount.findByIdAndUpdate(accountId, { accountBlocked: Boolean(toogle) }, { new: true })
+            console.log(toogleAccount,'toogleAccount driver')
+            return res.status(200).json({ data: toogleAccount, msg: `Account ${Boolean(toogle) ? "Deactivated" : "Activated"} ` })
+        }
+    }
+    catch (error) {
+        console.log(error)
+        return res.status(500).json({ data: null, msg: error })
+    }
+}
+
+module.exports = {createAccount,getAccount,getAccountByPhone,uploadPicture,fetchAllUsers,toogleAccountActivation}

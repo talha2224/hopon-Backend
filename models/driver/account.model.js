@@ -11,7 +11,9 @@ const accountSchema = mongoose.Schema({
   carPhotos: { type: Array, required: true },
   location: {type: { type: String, default: "Point" },coordinates: [Number],},
   online:{type:String,default:"off"},
-  profile:{type:String,default:null}
+  profile:{type:String,default:null},
+  accountBlocked:{type:Boolean,default:false}
+
 }, { timestamps: true });
 
 // Create the DriverAccount model

@@ -44,18 +44,10 @@ const getBookingForDriver = async (req, res) => {
 
 const acceptBooking = async (req, res) => {
     try {
-        // const findBooking = await bookingModel.findById(req.params.id,{status: 'Ongoing',accepted:true })
-        // if(findBooking.status=='Ongoing'){
-        //     const newBooking = await bookingModel.findByIdAndUpdate(req.params.id,{status: 'Completed',accepted:true },{$new:true});
-        //     return res.status(200).json({data: newBooking });
-        // }
-        // else{
         const newBooking = await bookingModel.findByIdAndUpdate(req.params.id, { status: 'Ongoing', accepted: true },{$new:true});
         await Notification.create({riderId:newBooking.rider,title:"Ride Accepted",description:"You ride request is accepted"})
         await Notification.create({driverId:newBooking.driver,title:"Ride Accepted",description:"You have accepted  ride request"})
-
         return res.status(200).json({ data: newBooking });
-        // }
     }
 
     catch (error) {
@@ -198,7 +190,17 @@ const getBookingById = async (req, res) => {
 }
 
 
+const getAllBookings = async (req,res) =>{
+    try {
+        let data = await bookingModel.find({}).populate("rider").populate("driver")
+        return res.status(200).json({data:data})
+    } 
+    catch (error) {
+        console.log(error)
+    }
+}
 
 
 
-module.exports = { createBooking, getBookingForDriver, acceptBooking, getActiveBooking ,endRide,cancellBooking,getCancelledBooking,getCompletedBooking,getBookingById}
+
+module.exports = {getAllBookings, createBooking, getBookingForDriver, acceptBooking, getActiveBooking ,endRide,cancellBooking,getCancelledBooking,getCompletedBooking,getBookingById}

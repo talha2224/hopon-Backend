@@ -6,7 +6,8 @@ const accountSchema = mongoose.Schema({
     last_name:{type:String,required:true},
     phone_number:{type:String,required:true},
     prefference:{type:String,required:true},
-    profile:{type:String,default:null}
+    profile:{type:String,default:null},
+    accountBlocked:{type:Boolean,default:false}
 },{timestamps:true})
 
 

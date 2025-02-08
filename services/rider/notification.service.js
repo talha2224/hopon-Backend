@@ -34,5 +34,24 @@ const getNotificationForAdmin = async(req,res)=>{
 }
 
 
-module.exports = {getNotificationForRider,getNotificationForDriver,getNotificationForAdmin}
+const createNotification = async (req,res)=>{
+    try {
+        console.log(req?.body,'req?.body')
+        let {title,description,role,userId} = req.body
+        if(role=="rider"){
+            let data = await Notification.create({title,description,role,riderId:userId})
+            return res.status(200).json({msg:null,data})
+        }
+        else{
+            let data = await Notification.create({title,description,role,driverId:userId})
+            return res.status(200).json({msg:null,data})
+        }
+    } 
+    catch (error) {
+        console.log(error)
+    }
+}
+
+
+module.exports = {getNotificationForRider,getNotificationForDriver,getNotificationForAdmin,createNotification}
 

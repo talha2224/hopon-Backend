@@ -45,7 +45,10 @@ const createAccount = async (req, res) => {
 const getAccount = async (req, res) => {
     try {
         let findAccount = await driverAccount.findById(req.params.id)
-        if (findAccount) {
+        if(findAccount?.accountBlocked){
+            return res.status(404).json({msg:"Account Not Found"})
+        }
+        else if (findAccount) {
             return res.status(200).json({ msg: null, data: findAccount })
         }
         else {
