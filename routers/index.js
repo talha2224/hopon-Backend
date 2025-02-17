@@ -14,6 +14,7 @@ combineRouter.use("/message",require("./chat/message.router"))
 combineRouter.use("/place",require("./rider/places.router"))
 combineRouter.use("/otp",require("./driver/otp.router"))
 combineRouter.use("/dashboard",require("./dashboard.router"))
+combineRouter.use("/price",require("./price.router"))
 
 
 

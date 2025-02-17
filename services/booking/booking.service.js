@@ -1,3 +1,4 @@
+const PriceModel = require("../../models/admin/price.model");
 const bookingModel = require("../../models/booking/booking.model");
 const driverAccount = require("../../models/driver/account.model");
 const Notification = require("../../models/rider/notification.model");
@@ -14,8 +15,8 @@ const createBooking = async (req, res) => {
             return res.status(400).json({ message: 'Missing required fields' });
         }
         const distance = calculateDistance(pickupLocation, dropoffLocation);
-
-        const fare = distance * 5;
+        let price = await PriceModel.find({})
+        const fare = distance * price[0]?.perKmPrice || 5;
         const newBooking = await bookingModel.create({ rider: riderId, driver: driverId, pickupLocation, dropoffLocation, fare, distance, status: 'Pending', dropoffAddress,pickUpAddress });
         await Notification.create({riderId,title:"New Ride Request",description:"You have open a new ride request"})
         await Notification.create({driverId,title:"New Ride Request",description:"You have recieve a new ride request"})
@@ -59,7 +60,9 @@ const acceptBooking = async (req, res) => {
 const endRide = async (req, res) => {
     try {
         const newBooking = await bookingModel.findByIdAndUpdate(req.params.id, {accepted: true,status:"Completed" }, { $new: true });
-        let fareAmount =newBooking?.fare*0.05
+        let taxData = await PriceModel.find({});
+        let taxPercentage = taxData[0]?.deductCharges || 5;
+        let fareAmount = newBooking?.fare * (taxPercentage / 100);
         await Wallet.create({riderId:newBooking.rider,amount:newBooking?.fare,deposit:false,message:"Ride Payment Sent"})
         await Wallet.create({driverId:newBooking.driver,amount:newBooking?.fare,deposit:true,message:"Ride Payment Recieved"})
         await driverAccount.findByIdAndUpdate(newBooking.driver,{pendingAmount:fareAmount})        
