@@ -10,7 +10,6 @@ const { calculateDistance } = require("../../utils/function")
 const createBooking = async (req, res) => {
     try {
         const { riderId, driverId, pickupLocation, dropoffLocation, dropoffAddress,pickUpAddress} = req.body;
-        console.log(riderId, driverId, pickupLocation, dropoffLocation)
         if (!riderId || !driverId || !pickupLocation || !dropoffLocation) {
             return res.status(400).json({ message: 'Missing required fields' });
         }
