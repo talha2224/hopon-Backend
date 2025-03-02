@@ -5,7 +5,6 @@ const { uploadFile } = require("../../utils/function")
 
 const createAccount = async(req,res)=>{
     try {
-        console.log('ENTER')
         let {first_name,last_name,phone_number,prefference} = req.body
         let findAccount = await riderAccount.findOne({phone_number:phone_number})
         if(findAccount){
